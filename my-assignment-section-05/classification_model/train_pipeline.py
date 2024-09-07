@@ -1,6 +1,5 @@
-import numpy as np
 from config.core import config
-from pipeline import price_pipe
+from pipeline import titanic_pipe
 from processing.data_manager import load_dataset, save_pipeline
 from sklearn.model_selection import train_test_split
 
@@ -20,13 +19,12 @@ def run_training() -> None:
         # for reproducibility
         random_state=config.model_config.random_state,
     )
-    y_train = np.log(y_train)
 
     # fit model
-    price_pipe.fit(X_train, y_train)
+    titanic_pipe.fit(X_train, y_train)
 
     # persist trained model
-    save_pipeline(pipeline_to_persist=price_pipe)
+    save_pipeline(pipeline_to_persist=titanic_pipe)
 
 
 if __name__ == "__main__":

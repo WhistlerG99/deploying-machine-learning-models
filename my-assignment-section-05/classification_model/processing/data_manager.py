@@ -1,21 +1,72 @@
+import os
+import re
 import typing as t
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from regression_model import __version__ as _version
-from regression_model.config.core import DATASET_DIR, TRAINED_MODEL_DIR, config
+from classification_model import __version__ as _version
+from classification_model.config.core import DATASET_DIR, DATASET_URL, TRAINED_MODEL_DIR, config
+
+
+def get_first_cabin(row):
+    try:
+        return row.split()[0]
+    except AttributeError:
+        return np.nan
+
+
+def get_title(passenger):
+    line = passenger
+    if re.search('Mrs', line):
+        return 'Mrs'
+    elif re.search('Mr', line):
+        return 'Mr'
+    elif re.search('Miss', line):
+        return 'Miss'
+    elif re.search('Master', line):
+        return 'Master'
+    else:
+        return 'Other'
+
+
+def pre_pipeline_preparation(*, dataframe: pd.DataFrame) -> pd.DataFrame:
+    # replace question marks with NaN values
+    data = dataframe.replace("?", np.nan)
+
+    # retain only the first cabin if more than
+    # 1 are available per passenger
+    data["cabin"] = data["cabin"].apply(get_first_cabin)
+
+    data["title"] = data["name"].apply(get_title)
+
+    # cast numerical variables as floats
+    data["fare"] = data["fare"].astype("float")
+    data["age"] = data["age"].astype("float")
+
+    # drop unnecessary variables
+    data.drop(labels=config.model_config.unused_fields, axis=1, inplace=True)
+
+    return data
+
+
+def _load_raw_dataset(*, file_name: str) -> pd.DataFrame:
+    file_path = Path(f"{DATASET_DIR}/{file_name}")
+    if os.path.exists(file_path):
+        dataframe = pd.read_csv(Path(f"{DATASET_DIR}/{file_name}"))
+    else:
+        dataframe = pd.read_csv(DATASET_URL)
+        dataframe.to_csv(Path(f"{DATASET_DIR}/{file_name}"), index=None)
+    return dataframe
 
 
 def load_dataset(*, file_name: str) -> pd.DataFrame:
-    dataframe = pd.read_csv(Path(f"{DATASET_DIR}/{file_name}"))
-    dataframe["MSSubClass"] = dataframe["MSSubClass"].astype("O")
-
-    # rename variables beginning with numbers to avoid syntax errors later
-    transformed = dataframe.rename(columns=config.model_config.variables_to_rename)
-    return transformed
+    dataframe = _load_raw_dataset(file_name=file_name)
+    dataframe = pre_pipeline_preparation(dataframe=dataframe)
+    return dataframe
 
 
 def save_pipeline(*, pipeline_to_persist: Pipeline) -> None:

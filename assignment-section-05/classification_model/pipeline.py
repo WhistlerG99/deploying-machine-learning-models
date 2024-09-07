@@ -21,25 +21,32 @@ titanic_pipe = Pipeline(
             "categorical_imputation",
             CategoricalImputer(
                 imputation_method="missing",
+                fill_value="Missing",
                 variables=config.model_config.categorical_vars,
-            ),
+            )
         ),
         # add missing indicator to numerical variables
         (
             "missing_indicator",
-            AddMissingIndicator(variables=config.model_config.numerical_vars),
+            AddMissingIndicator(
+                variables=config.model_config.numerical_vars
+            )
         ),
         # impute numerical variables with the median
         (
             "median_imputation",
             MeanMedianImputer(
-                imputation_method="median", variables=config.model_config.numerical_vars
-            ),
+                imputation_method="median",
+                variables=config.model_config.numerical_vars
+            )
         ),
         # Extract letter from cabin
         (
             "extract_letter",
-            ExtractLetterTransformer(variables=config.model_config.cabin_vars),
+            ExtractLetterTransformer(
+                variables=config.model_config.cabin_vars[0],
+                fill_value="Missing"
+            )
         ),
         # == CATEGORICAL ENCODING ======
         # remove categories present in less than 5% of the observations (0.05)
@@ -47,18 +54,39 @@ titanic_pipe = Pipeline(
         (
             "rare_label_encoder",
             RareLabelEncoder(
-                tol=0.05, n_categories=1, variables=config.model_config.categorical_vars
-            ),
+                tol=0.05,
+                n_categories=1,
+                variables=config.model_config.categorical_vars
+            )
         ),
         # encode categorical variables using one hot encoding into k-1 variables
         (
             "categorical_encoder",
             OneHotEncoder(
-                drop_last=True, variables=config.model_config.categorical_vars
-            ),
+                drop_last=True,
+                variables=config.model_config.categorical_vars
+            )
+        ),
+        (
+            'yeojohnson', 
+            YeoJohnsonTransformer(
+                variables=config.model_config.yeojohnson_vars
+            )
         ),
         # scale
-        ("scaler", StandardScaler()),
-        ("Logit", LogisticRegression(C=0.0005, random_state=0)),
+        (
+            'scaler',
+            SklearnTransformerWrapper(
+                transformer=StandardScaler(),
+                variables=config.model_config.yeojohnson_vars
+            )
+        ),
+        (
+            "Logit", 
+            LogisticRegression(
+                C=config.model_config.alpha,#0.0005, 
+                random_state=config.model_config.random_state
+            )
+        ),
     ]
 )

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence
+from typing import List, Optional
 
 from pydantic import BaseModel
 from strictyaml import YAML, load
@@ -12,14 +12,15 @@ ROOT = PACKAGE_ROOT.parent
 CONFIG_FILE_PATH = PACKAGE_ROOT / "config.yml"
 DATASET_DIR = PACKAGE_ROOT / "datasets"
 TRAINED_MODEL_DIR = PACKAGE_ROOT / "trained_models"
+DATASET_URL = 'https://www.openml.org/data/get_csv/16826755/phpMYEkMl'
 
 
 class AppConfig(BaseModel):
     """
     Application-level config.
     """
-
     package_name: str
+    raw_data_file: str
     training_data_file: str
     test_data_file: str
     pipeline_save_file: str
@@ -30,22 +31,16 @@ class ModelConfig(BaseModel):
     All configuration relevant to model
     training and feature engineering.
     """
-
     target: str
-    variables_to_rename: Dict
+    unused_fields: List[str]
     features: List[str]
     test_size: float
     random_state: int
     alpha: float
-    categorical_vars_with_na_frequent: List[str]
-    categorical_vars_with_na_missing: List[str]
-    numerical_vars_with_na: List[str]
-    numericals_log_vars: Sequence[str]
-    binarize_vars: Sequence[str]
-    categorical_vars: Sequence[str]
-    cabin_vars: Sequence[str]
-    yeojohnson_vars: Sequence[str]
-
+    numerical_vars: List[str]
+    categorical_vars: List[str]
+    cabin_vars: List[str]
+    yeojohnson_vars: List[str]
 
 
 class Config(BaseModel):

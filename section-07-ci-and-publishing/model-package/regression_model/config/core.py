@@ -69,7 +69,7 @@ def find_config_file() -> Path:
     raise Exception(f"Config not found at {CONFIG_FILE_PATH!r}")
 
 
-def fetch_config_from_yaml(cfg_path: Path = Path("")) -> YAML:
+def fetch_config_from_yaml(cfg_path: Path = CONFIG_FILE_PATH) -> YAML:
     """Parse YAML containing the package configuration."""
 
     if not cfg_path == "":
@@ -81,10 +81,10 @@ def fetch_config_from_yaml(cfg_path: Path = Path("")) -> YAML:
     raise OSError(f"Did not find config file at path: {cfg_path}")
 
 
-def create_and_validate_config(parsed_config: YAML = None) -> Config:
+def create_and_validate_config(parsed_config: YAML = CONFIG_FILE_PATH) -> Config:
     """Run validation on config values."""
     if parsed_config is None:
-        parsed_config = fetch_config_from_yaml("")
+        parsed_config = fetch_config_from_yaml(CONFIG_FILE_PATH)
 
     # specify the data attribute from the strictyaml YAML type.
     _config = Config(

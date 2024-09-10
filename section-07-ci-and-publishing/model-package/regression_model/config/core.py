@@ -84,8 +84,9 @@ def fetch_config_from_yaml(cfg_path: Path = CONFIG_FILE_PATH) -> YAML:
 def create_and_validate_config(parsed_config: YAML = None) -> Config:
     """Run validation on config values."""
     print("Current Working Directory: ", os.getcwd(), "\n")
-    print("Current Directory contents\n        ", "\n        ".join(os.listdir()), "\n")
-    print("Sup Directory contents\n        ", "\n        ".join(os.listdir("../")), "\n")
+    print("Current Directory contents\n       ", "\n        ".join(os.listdir()), "\n")
+    print("Sup Directory contents\n       ", "\n        ".join(os.listdir("../")), "\n")
+    print("regression_model Directory contents\n       ", "\n        ".join(os.listdir("./regression_model")), "\n")
     
     if parsed_config is None:
         parsed_config = fetch_config_from_yaml(CONFIG_FILE_PATH)

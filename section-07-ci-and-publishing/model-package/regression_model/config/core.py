@@ -72,7 +72,7 @@ def find_config_file() -> Path:
 def fetch_config_from_yaml(cfg_path: Path = CONFIG_FILE_PATH) -> YAML:
     """Parse YAML containing the package configuration."""
 
-    if not cfg_path == "":
+    if cfg_path == "":
         cfg_path = find_config_file()
     else:
         with open(cfg_path, "r") as conf_file:

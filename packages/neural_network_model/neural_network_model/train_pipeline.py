@@ -1,5 +1,5 @@
-from sklearn.externals import joblib
-
+# from sklearn.externals import joblib
+import joblib
 from neural_network_model import pipeline as pipe
 from neural_network_model.config import config
 from neural_network_model.processing import data_management as dm

@@ -5,8 +5,8 @@ from glob import glob
 from pathlib import Path
 
 import pandas as pd
-from keras.models import load_model
-from keras.wrappers.scikit_learn import KerasClassifier
+from tensorflow.keras.models import load_model
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.externals import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline

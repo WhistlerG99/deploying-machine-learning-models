@@ -14,7 +14,8 @@ h5py==3.1.0
 Theano==1.0.5
 
 # packaging
-setuptools#==40.6.3
+#setuptools==40.6.3
+setuptools
 wheel==0.32.3
 
 # testing requirements

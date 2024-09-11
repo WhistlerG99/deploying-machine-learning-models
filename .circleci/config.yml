@@ -13,7 +13,7 @@ prepare_venv: &prepare_venv
     command: |
       python -m venv venv
       source venv/bin/activate
-      pip install --upgrade pip
+      pip install --trusted-host pypi.python.org --upgrade pip
 
 prepare_tox: &prepare_tox
   run:
@@ -236,7 +236,7 @@ jobs:
           name: Install requirements
           command: |
             . venv/bin/activate
-            pip install -r packages/neural_network_model/requirements.txt
+            pip install --trusted-host pypi.python.org -r packages/neural_network_model/requirements.txt
       - run:
           name: Fetch Training data - 2GB
           command: |

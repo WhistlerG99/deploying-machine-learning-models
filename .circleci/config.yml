@@ -271,7 +271,7 @@ workflows:
           filters:
             branches:
               only:
-                - master  
+                - demo  
     # jobs:
     #   - section_07_test_app
     #   - section_07_deploy_app_to_railway:
